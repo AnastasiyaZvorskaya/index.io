@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+
+
+    <script>
+        /* 2. Реализовать класс, описывающий html элемент.
+        Класс HtmlElement должен содержать внутри себя:
+        ■■ название тега;
+        ■■ самозакрывающийся тег или нет;
+        ■■ текстовое содержимое;
+        ■■ массив атрибутов;
+        ■■ массив стилей;
+        ■■ массив вложенных таких же тегов;
+        ■■ метод для установки атрибута;
+        ■■ метод для установки стиля;
+        ■■ метод для добавления вложенного элемента в конец теку-
+        щего элемента;
+        ■■ метод для добавления вложенного элемента в начало те-
+        кущего элемента;
+        ■■ метод getHtml(), который возвращает html код в виде
+        строки, включая html код вложенных элементов.
+        С помощью написанного класса реализовать следующий блок
+        и добавить его на страницу с помощью document.write().
+        Обратите внимание. Чтобы получить весь этот html в виде
+        строки должно быть достаточно вызвать метод getHtml только
+        у тега с идентификатором wrapper. */
+        class myHtml {
+            name = "";
+            selfClosed = 0;
+            text = "";
+            atributes = {}
+            styles = {};
+            childrens = {};
+            htmlResult = "";
+
+            constructor(x) {
+                this.name = x.name;
+                this.atributes = x.atributes;
+                this.styles = x.styles;
+                this.text = x.text;
+                this.selfClosed = x.selfClosed;
+                this.childrens = x.childrens;
+            }
+            setStyle() {
+                let style = ' style = "';
+                for (let property in this.styles) {
+                    style += property + ": " + this.styles[property] + ";";
+                }
+                style += '"';
+
+                if (style == " style = \"\"") {
+                    return "";
+                }
+
+                return style;
+            }
+            setAtributes() {
+                let atr = "";
+                for (let property in this.atributes) {
+                    atr += ' ' + property + '= "' + this.atributes[property] + '"';
+                }
+                return atr;
+            }
+            getHtml() {
+                this.htmlResult += "<" + this.name + " ";
+                this.htmlResult += this.setStyle();
+                this.htmlResult += this.setAtributes();
+                this.htmlResult += ">";
+                if (this.text) this.htmlResult += this.text;
+                if (!this.selfClosed) {
+                    for (let chld in this.childrens) {
+                        let newChld = new myHtml(this.childrens[chld]);
+                        this.htmlResult += newChld.getHtml();
+                    }
+                    this.htmlResult += "</" + this.name + ">";
+                }
+                console.log("getHTML", this.htmlResult);
+                return this.htmlResult;
+            }
+            scanObjectRecursive(parentID, childrenObj, parentObj) {
+                for (let chld in parentObj.childrens) {
+                    parentObj.childrens[chld] = this.scanObjectRecursive(parentID, childrenObj, parentObj.childrens[chld])
+                }
+                if (parentObj.atributes.id === parentID)
+                    parentObj.childrens.push(childrenObj);
+                return parentObj;
+            }
+        }
+
+        let beginObj = {
+            name: "div",
+            atributes: {
+                id: "wrapper",
+            },
+            styles: {
+                display: "flex",
+            },
+            childrens: [{
+                name: "div",
+                styles: {
+                    width: "300px",
+                    margin: "10px"
+                },
+                childrens: [{
+                    name: "h3",
+                    text: "What is Loren Ipsum?"
+                }, {
+                    name: "img",
+                    atributes: {
+                        src: "https://picsum.photos/id/237/200/300",
+                        alt: "Lorem Ipsum"
+                    },
+                    styles: {
+                        width: "60px",
+                        height: "70px"
+                    },
+                }, {
+                    name: "p",
+                    text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sunt doloremque delectus qui. Id totam beatae, harum sequi repudiandae molestiae impedit ad ullam nihil dolore aliquid non tempora, quis tenetur placeat nobis reiciendis amet magni, perferendis laudantium provident. Dolores suscipit deleniti odit temporibus, culpa officiis aspernatur quisquam dolorem aliquam eum dolore obcaecati. A quia similique temporibus minus consequatur, odio unde, ex tempora deserunt deleniti reiciendis repellat error expedita provident",
+                    styles: {
+                        align: "justify"
+                    },
+                    childrens: [{
+                        name: "a",
+                        text: "More...",
+                        atributes: {
+                            href: "https://www.lipsum.com/",
+                            target: "_blank"
+                        },
+                    }]
+                }]
+
+            }, {
+                name: "div",
+                styles: {
+                    width: "300px",
+                    margin: "10px"
+                },
+                childrens: [{
+                    name: "h3",
+                    text: "What is Loren Ipsum?"
+                }, {
+                    name: "img",
+                    atributes: {
+                        src: "https://picsum.photos/id/237/200/300",
+                        alt: "Lorem Ipsum"
+                    },
+                    styles: {
+                        width: "60px",
+                        height: "70px"
+                    },
+                }, {
+                    name: "p",
+                    text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sunt doloremque delectus qui. Id totam beatae, harum sequi repudiandae molestiae impedit ad ullam nihil dolore aliquid non tempora, quis tenetur placeat nobis reiciendis amet magni, perferendis laudantium provident. Dolores suscipit deleniti odit temporibus, culpa officiis aspernatur quisquam dolorem aliquam eum dolore obcaecati. A quia similique temporibus minus consequatur, odio unde, ex tempora deserunt deleniti reiciendis repellat error expedita provident",
+                    styles: {
+                        align: "justify"
+                    },
+                    childrens: [{
+                        name: "a",
+                        text: "More...",
+                        atributes: {
+                            href: "https://www.lipsum.com/",
+                            target: "_blank"
+                        },
+                    }]
+                }]
+
+            }]
+        };
+
+        let wrapper = new myHtml(beginObj);
+        document.write(wrapper.getHtml());
+    </script>
+</body>
+
+</html>
